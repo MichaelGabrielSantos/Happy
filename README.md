@@ -16,9 +16,12 @@ npm test         # testes da lógica (avaliação de letras, gerador da grade)
 npm run build    # gera a versão estática em dist/
 ```
 
-## Publicando
+## Publicando (Vercel)
 
-O workflow `.github/workflows/deploy.yml` publica no GitHub Pages a cada push na `main`. Basta, uma vez, ir em **Settings → Pages → Source** e escolher **GitHub Actions**.
+1. Em [vercel.com/new](https://vercel.com/new), importe este repositório do GitHub.
+2. A Vercel detecta o Vite sozinha (as configurações estão em `vercel.json`); é só clicar em **Deploy**.
+
+Depois disso, todo push na `main` publica em produção, e todo outro branch ou PR ganha um link de prévia. O build roda os testes antes: se algum falhar, não publica.
 
 ## Como funciona
 
