@@ -6,7 +6,7 @@ import { compartilhar } from '../lib/compartilhar';
 import { formatarDuracao, numeroDoDia } from '../lib/dia';
 import { normalizar } from '../lib/texto';
 import { useAviso } from '../lib/useAviso';
-import type { Painel } from '../termo/Termo';
+import type { Painel } from '../tipos';
 import { BANCO } from './banco';
 import { casasDa, gerarCruzadinha, type Direcao, type Palavra } from './gerador';
 
@@ -394,7 +394,7 @@ export function Cruzadas({ data, painel, setPainel }: Props) {
         </Modal>
       )}
 
-      {painel === 'estatisticas' && (
+      {painel === 'placar' && (
         <Modal titulo="Progresso nas cruzadas" aoFechar={() => setPainel(null)}>
           <div className="numeros">
             <div><strong>{tempos.length}</strong><span>cruzadinhas do dia</span></div>

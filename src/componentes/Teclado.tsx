@@ -1,4 +1,4 @@
-import type { Estado } from '../termo/logica';
+import type { Estado } from '../termo/api';
 
 const LINHAS = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
 

@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Cruzadas } from './cruzadas/Cruzadas';
 import { ler, salvar } from './lib/armazenamento';
 import { hoje } from './lib/dia';
-import { Termo, type Painel } from './termo/Termo';
+import { Termo } from './termo/Termo';
+import type { Painel } from './tipos';
 
 type Jogo = 'termo' | 'cruzadas';
 
@@ -43,27 +44,29 @@ export function App() {
   return (
     <div className="app">
       <header className="topo">
-        <button type="button" className="icone" aria-label="Como jogar" onClick={() => setPainel('ajuda')}>?</button>
-        <h1>O Termo</h1>
-        <button type="button" className="icone" aria-label="Estatísticas" onClick={() => setPainel('estatisticas')}>
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-            <path fill="currentColor" d="M4 20h4V10H4v10Zm6 0h4V4h-4v16Zm6 0h4v-7h-4v7Z" />
-          </svg>
-        </button>
+        <h1 className="logo">
+          O <span>TERMO</span>
+        </h1>
+        <div className="topo-botoes">
+          <button type="button" className="icone" aria-label="Como jogar" onClick={() => setPainel('ajuda')}>?</button>
+          <button type="button" className="icone" aria-label={jogo === 'termo' ? 'Ranking' : 'Progresso'} onClick={() => setPainel('placar')}>
+            {jogo === 'termo' ? '🏆' : '📊'}
+          </button>
+        </div>
       </header>
 
       <nav className="abas" role="tablist">
         <button type="button" role="tab" aria-selected={jogo === 'termo'} className={jogo === 'termo' ? 'ativa' : ''} onClick={() => trocar('termo')}>
-          Termo
+          🔥 Palavra do dia
         </button>
         <button type="button" role="tab" aria-selected={jogo === 'cruzadas'} className={jogo === 'cruzadas' ? 'ativa' : ''} onClick={() => trocar('cruzadas')}>
-          Palavras Cruzadas
+          ✏️ Cruzadas
         </button>
       </nav>
 
       <main>
         {jogo === 'termo' ? (
-          <Termo key={data} data={data} painel={painel} setPainel={setPainel} />
+          <Termo key={data} painel={painel} setPainel={setPainel} />
         ) : (
           <Cruzadas key={data} data={data} painel={painel} setPainel={setPainel} />
         )}

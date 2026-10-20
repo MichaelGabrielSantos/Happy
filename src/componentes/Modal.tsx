@@ -16,10 +16,12 @@ export function Modal({ titulo, aoFechar, children }: Props) {
   return (
     <div className="modal-fundo" onClick={aoFechar}>
       <div className="modal" role="dialog" aria-modal="true" aria-label={titulo} onClick={(e) => e.stopPropagation()}>
-        <button type="button" className="modal-fechar" aria-label="Fechar" onClick={aoFechar}>
-          ×
-        </button>
-        <h2>{titulo}</h2>
+        <div className="modal-cabeca">
+          <h2>{titulo}</h2>
+          <button type="button" className="modal-fechar" aria-label="Fechar" onClick={aoFechar}>
+            ×
+          </button>
+        </div>
         {children}
       </div>
     </div>

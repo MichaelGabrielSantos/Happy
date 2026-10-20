@@ -1,36 +1,46 @@
 # O Termo
 
-Jogo de palavras em português, direto no navegador, com dois modos:
+A palavra do dia com **gírias, memes e o que está bombando na internet**. Acerte rápido, entre no ranking com seu @ do Instagram e compartilhe o resultado no Story.
 
-- **Termo** — adivinhe a palavra de 5 letras do dia em 6 tentativas. Verde = letra certa no lugar certo, amarelo = letra existe em outro lugar, escuro = não existe. A palavra é a mesma para todo mundo e troca à meia-noite (horário de Brasília). Acentos são preenchidos sozinhos.
-- **Palavras Cruzadas** — descubra as palavras pelas dicas e preencha a grade. Tem a cruzadinha do dia (igual para todos) e o modo treino, que gera grades novas à vontade.
+- **Palavra do dia**: de 4 a 8 letras, 6 tentativas, cronômetro. Acertar vale 1000 pontos, −100 por tentativa extra e −1 por segundo (até 5 min).
+- **Ranking**: do dia e geral (soma dos pontos). Só entra quem acerta.
+- **Compartilhar**: gera uma imagem 1080×1920 (formato Story) e abre o menu do celular, onde aparece o Instagram.
+- **Admin** (`/admin`): fila de palavras com significado, reordenar, adicionar várias de uma vez, trocar a palavra de hoje (enquanto ninguém jogou) e tirar alguém do ranking.
+- **Palavras Cruzadas**: modo extra, local, sem ranking.
 
-Progresso, sequência de vitórias e tempos ficam salvos no próprio navegador (`localStorage`); não há servidor.
+## Como a palavra do dia é escolhida
 
-## Rodando
+No primeiro acesso do dia (horário de Brasília) o servidor tira a **próxima palavra da fila do admin**. Se a fila estiver vazia, usa a **reserva de memes** (`api/_lib/memes.ts`, ~70 gírias com explicação). A resposta nunca vai para o navegador antes de a partida acabar, e o tempo é medido no servidor.
+
+## Publicando na Vercel
+
+1. Em [vercel.com/new](https://vercel.com/new), importe este repositório.
+2. No projeto, vá em **Storage → Marketplace → Upstash (Redis)** e conecte um banco (o plano grátis basta). As variáveis de conexão são criadas sozinhas.
+3. Em **Settings → Environment Variables**, crie `ADMIN_SENHA` com a senha do admin.
+4. Faça um novo deploy. O jogo fica na raiz e o admin em `/admin`.
+
+Sem o banco conectado a API responde com erro; sem `ADMIN_SENHA` o admin fica bloqueado.
+
+## Rodando no computador
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
-npm test         # testes da lógica (avaliação de letras, gerador da grade)
-npm run build    # gera a versão estática em dist/
+npm run dev      # http://localhost:5173 — a API roda junto, com banco em memória
+npm test         # testes da lógica (pontuação, fila, ranking, cruzadas)
 ```
 
-## Publicando (Vercel)
+Localmente a senha do admin é `admin`, e o banco em memória zera quando o servidor reinicia.
 
-1. Em [vercel.com/new](https://vercel.com/new), importe este repositório do GitHub.
-2. A Vercel detecta o Vite sozinha (as configurações estão em `vercel.json`); é só clicar em **Deploy**.
+## Estrutura
 
-Depois disso, todo push na `main` publica em produção, e todo outro branch ou PR ganha um link de prévia. O build roda os testes antes: se algum falhar, não publica.
-
-## Como funciona
-
-| Arquivo | O que faz |
+| Caminho | O que é |
 | --- | --- |
-| `src/termo/logica.ts` | Avaliação das letras (inclusive letras repetidas) e palavra do dia |
-| `src/data/respostas.ts` | 1.250 palavras comuns que podem ser a resposta, em ordem embaralhada fixa |
-| `src/data/validas.txt` | ~8.800 palavras de 5 letras aceitas como tentativa |
-| `src/cruzadas/banco.ts` | Banco de palavras e dicas das cruzadas — **é só acrescentar linhas** |
-| `src/cruzadas/gerador.ts` | Monta a grade cruzando as palavras a partir de uma semente (o dia) |
+| `api/jogo.ts`, `api/ranking.ts`, `api/admin.ts` | Funções da Vercel |
+| `api/_lib/jogo.ts` | Regras: palavra do dia, chutes, pontuação, ranking, fila |
+| `api/_lib/armazem.ts` | Redis (Upstash) em produção, memória no desenvolvimento |
+| `api/_lib/dicionario.ts` | ~100 mil palavras de 4 a 8 letras aceitas como chute |
+| `src/termo/` | Tela do jogo, ranking e imagem do Story |
+| `src/admin/`, `admin/index.html` | Página do admin |
+| `src/cruzadas/` | Palavras cruzadas |
 
-As listas de palavras do Termo são geradas por `scripts/gerar_palavras.py` a partir do corpus [fserb/pt-br](https://github.com/fserb/pt-br) (licença MIT, © 2021 Fernando Serboncini). O script tem uma lista de palavras bloqueadas (nomes próprios, estrangeirismos, palavrões) para manter as respostas limpas.
+O dicionário é gerado por `scripts/gerar_palavras.py` a partir do corpus [fserb/pt-br](https://github.com/fserb/pt-br) (MIT, © 2021 Fernando Serboncini).
